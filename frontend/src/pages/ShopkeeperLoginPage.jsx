@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Store, LogIn, KeyRound, ArrowRight, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { Store, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../services/api';
@@ -47,11 +47,6 @@ export default function ShopkeeperLoginPage() {
     }
   };
 
-  const handleDemoFill = (u, p) => {
-    setIdentifier(u);
-    setPassword(p);
-  };
-
   return (
     <div className="min-h-[calc(100vh-140px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50/70">
       <div className="w-full max-w-md space-y-6">
@@ -76,31 +71,6 @@ export default function ShopkeeperLoginPage() {
               {errorMessage}
             </div>
           )}
-          {/* Quick Demo Logins for Shopkeepers */}
-          <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100/80 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900">
-              <KeyRound className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Demo Shopkeeper Credentials</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleDemoFill('owner_stationery', 'shop123')}
-                className="p-2 rounded-xl bg-white border border-indigo-200/60 hover:border-indigo-500 text-left transition-colors cursor-pointer"
-              >
-                <div className="font-bold text-slate-800 truncate">Stationery Owner</div>
-                <div className="text-[11px] text-slate-500">owner_stationery</div>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoFill('owner_canteen', 'shop123')}
-                className="p-2 rounded-xl bg-white border border-indigo-200/60 hover:border-indigo-500 text-left transition-colors cursor-pointer"
-              >
-                <div className="font-bold text-slate-800 truncate">Canteen Owner</div>
-                <div className="text-[11px] text-slate-500">owner_canteen</div>
-              </button>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -112,7 +82,7 @@ export default function ShopkeeperLoginPage() {
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="e.g. owner_stationery or store@campus.edu"
+                placeholder="e.g. lovelybakestudio or store@campus.edu"
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none text-sm transition-all"
               />
             </div>
