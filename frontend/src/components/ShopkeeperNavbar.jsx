@@ -35,7 +35,7 @@ export default function ShopkeeperNavbar() {
     logout();
     setDropdownOpen(false);
     setMobileOpen(false);
-    navigate('/shopkeeper/login');
+    navigate('/become-shopkeeper', { replace: true });
   };
 
   return (

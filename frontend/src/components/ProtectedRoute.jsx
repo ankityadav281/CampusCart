@@ -14,6 +14,9 @@ export default function ProtectedRoute({ children, allowedRoles = null }) {
   }
 
   if (!isAuthenticated) {
+    if (location.pathname.startsWith('/shop-dashboard')) {
+      return <Navigate to="/become-shopkeeper" replace />;
+    }
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

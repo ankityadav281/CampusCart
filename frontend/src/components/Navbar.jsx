@@ -48,10 +48,15 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
+    const isShop = isShopOwner;
     logout();
     setDropdownOpen(false);
     setMobileOpen(false);
-    navigate('/');
+    if (isShop) {
+      navigate('/become-shopkeeper', { replace: true });
+    } else {
+      navigate('/');
+    }
   };
 
   const navLinkClass = ({ isActive }) =>

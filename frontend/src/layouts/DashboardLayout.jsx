@@ -18,8 +18,16 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
+    const isShop =
+      user?.role === 'SHOP_OWNER' ||
+      badgeText?.toLowerCase().includes('shop') ||
+      badgeText?.toLowerCase().includes('merchant');
+    if (isShop) {
+      navigate('/become-shopkeeper', { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
     logout();
-    navigate('/');
   };
 
   const SidebarContent = (
