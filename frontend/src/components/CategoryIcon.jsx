@@ -1,0 +1,81 @@
+import {
+  BookOpen,
+  Briefcase,
+  Camera,
+  Coffee,
+  Dumbbell,
+  FolderTree,
+  Headphones,
+  Laptop,
+  Layers,
+  Printer,
+  Scissors,
+  Shirt,
+  ShoppingBag,
+  ShoppingBasket,
+  Smartphone,
+  Sparkles,
+  Store,
+  Tag,
+  UtensilsCrossed,
+  Wrench,
+} from 'lucide-react';
+
+const ICON_MAP = {
+  // Main predefined category icon identifiers
+  UtensilsCrossed,
+  BookOpen,
+  Laptop,
+  Shirt,
+  ShoppingBasket,
+  Sparkles,
+  Dumbbell,
+  Briefcase,
+  Store,
+  Tag,
+  Coffee,
+  Printer,
+  Smartphone,
+  Headphones,
+  Camera,
+  Scissors,
+  Wrench,
+  ShoppingBag,
+  FolderTree,
+  Layers,
+
+  // Lowercase & slug fallbacks
+  'food-beverages': UtensilsCrossed,
+  'food & beverages': UtensilsCrossed,
+  'food': UtensilsCrossed,
+  'canteen': UtensilsCrossed,
+  'stationery-educational-supplies': BookOpen,
+  'stationery & educational supplies': BookOpen,
+  'stationery': BookOpen,
+  'books': BookOpen,
+  'electronics-technology': Laptop,
+  'electronics & technology': Laptop,
+  'electronics': Laptop,
+  'fashion-lifestyle': Shirt,
+  'fashion & lifestyle': Shirt,
+  'fashion': Shirt,
+  'grocery-daily-essentials': ShoppingBasket,
+  'grocery & daily essentials': ShoppingBasket,
+  'grocery': ShoppingBasket,
+  'beauty-personal-care': Sparkles,
+  'beauty & personal care': Sparkles,
+  'beauty': Sparkles,
+  'sports-fitness': Dumbbell,
+  'sports & fitness': Dumbbell,
+  'sports': Dumbbell,
+  'other-campus-services': Briefcase,
+  'other campus services': Briefcase,
+  'services': Briefcase,
+};
+
+export default function CategoryIcon({ name, icon, className = 'w-5 h-5' }) {
+  const key = icon || (name ? name.toLowerCase() : '');
+  const IconComponent = ICON_MAP[key] || ICON_MAP[name?.toLowerCase()] || Store;
+
+  return <IconComponent className={className} />;
+}

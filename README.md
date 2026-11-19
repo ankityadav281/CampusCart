@@ -1,6 +1,6 @@
-# UniMart – University Multi-Vendor E-Commerce Marketplace
+# CampusCart – University Multi-Vendor E-Commerce Marketplace
 
-**UniMart** is a full-stack, multi-vendor university marketplace web application built with **React (Vite + Tailwind CSS)** and **Django REST Framework + SQLite**. Students and university staff can browse verified campus shops, inspect live inventory, add products from multiple shops into a single cart, place a unified checkout that automatically splits into independent shop-specific orders, and collect orders directly from campus shop pickup counters.
+**CampusCart** is a full-stack, multi-vendor university marketplace web application built with **React (Vite + Tailwind CSS)** and **Django REST Framework + SQLite**. Students and university staff can browse verified campus shops, inspect live inventory, add products from multiple shops into a single cart, place a unified checkout that automatically splits into independent shop-specific orders, and collect orders directly from campus shop pickup counters.
 
 ---
 
@@ -39,11 +39,11 @@ CampusCart/
 │   ├── manage.py
 │   ├── requirements.txt
 │   ├── .env.example
-│   ├── unimart.sqlite3
+│   ├── campuscart.sqlite3
 │   ├── media/                  # Uploaded & seeded shop logos, banners, and product images
 │   ├── config/                 # Settings, URLs, WSGI/ASGI, RBAC permissions
 │   ├── accounts/               # Custom User model, JWT Auth, Profile, Reset Password, Admin Users
-│   ├── shops/                  # Shop model, approval workflow, seed_unimart management command
+│   ├── shops/                  # Shop model, approval workflow, seed_campuscart management command
 │   ├── products/               # Category, Product, stock constraints, search/filter APIs
 │   ├── cart/                   # Cart & CartItem with stock checks & multi-shop grouping
 │   ├── orders/                 # OrderGroup, Order, OrderItem, atomic checkout, analytics, tests
@@ -85,14 +85,14 @@ pip install -r requirements.txt
 python manage.py migrate
 
 # Seed demo shops, 48 products, sample orders, reviews & images
-python manage.py seed_unimart
+python manage.py seed_campuscart
 
 # Start Django development server on http://127.0.0.1:8000
 python manage.py runserver
 ```
 
 > **Note:** To reset and re-seed demo data cleanly at any time, run:
-> `python manage.py seed_unimart --reset`
+> `python manage.py seed_campuscart --reset`
 
 ### 2. Start the Frontend (React + Vite)
 
@@ -215,4 +215,3 @@ Run the Django backend test suite covering registration/login, shop approvals, s
 cd d:\CampusCart\backend
 .\venv\Scripts\python.exe manage.py test -v 2
 ```
-"# UniMart" 
