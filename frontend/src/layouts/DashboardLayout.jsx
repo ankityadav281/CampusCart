@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, LogOut, Menu, ShoppingBag, X } from 'lucide-react';
+import { LogOut, Menu, ShoppingBag, X } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from '../components/NotificationBell';
@@ -81,17 +81,10 @@ export default function DashboardLayout({
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800 space-y-2">
-        <Link
-          to="/"
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Marketplace
-        </Link>
+      <div className="p-4 border-t border-slate-800">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/50 transition-colors cursor-pointer"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/50 transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           Sign Out ({user?.username})
