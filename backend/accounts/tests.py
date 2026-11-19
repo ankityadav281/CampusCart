@@ -23,6 +23,7 @@ class AuthTests(APITestCase):
     def test_shopkeeper_registration(self):
         url = reverse('auth-register-shopkeeper')
         data = {
+            'shop_name': 'Lovely Bake Studio',
             'username': 'Lovely Bake Studio',
             'email': 'bakestudio@mail.com',
             'password': 'CampusCart@2026Secure!',
@@ -34,5 +35,9 @@ class AuthTests(APITestCase):
         res = self.client.post(url, data)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data['user']['role'], User.Role.SHOP_OWNER)
-        self.assertEqual(res.data['user']['username'], 'lovely_bake_studio')
-        self.assertTrue(User.objects.filter(username='lovely_bake_studio', role=User.Role.SHOP_OWNER).exists())
+        # Username follows shop name without underscore
+        self.assertEqual(res.data['user']['username'], 'lovelybakestudio')
+        user = User.objects.get(username='lovelybakestudio')
+        self.assertEqual(user.role, User.Role.SHOP_OWNER)
+        self.assertIsNotNone(user.shop)
+        self.assertEqual(user.shop.name, 'Lovely Bake Studio')

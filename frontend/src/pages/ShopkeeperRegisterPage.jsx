@@ -7,6 +7,7 @@ import { getErrorMessage } from '../services/api';
 
 export default function ShopkeeperRegisterPage() {
   const [formData, setFormData] = useState({
+    shop_name: '',
     full_name: '',
     username: '',
     email: '',
@@ -15,6 +16,7 @@ export default function ShopkeeperRegisterPage() {
     password: '',
     confirm_password: '',
   });
+  const [usernameTouched, setUsernameTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
@@ -22,6 +24,40 @@ export default function ShopkeeperRegisterPage() {
   const { registerShopkeeper } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  const handleShopNameChange = (e) => {
+    const val = e.target.value;
+    setFormData((prev) => {
+      const updated = { ...prev, shop_name: val };
+      if (!usernameTouched) {
+        // Automatically follows shop name without underscore
+        updated.username = val.toLowerCase().replace(/[^a-z0-9]/g, '');
+      }
+      return updated;
+    });
+    if (fieldErrors.shop_name) {
+      setFieldErrors((prev) => ({ ...prev, shop_name: null }));
+    }
+    if (fieldErrors.username && !usernameTouched) {
+      setFieldErrors((prev) => ({ ...prev, username: null }));
+    }
+    if (generalError) setGeneralError('');
+  };
+
+  const handleUsernameChange = (e) => {
+    const rawVal = e.target.value;
+    const cleaned = rawVal.toLowerCase().replace(/[\s_]+/g, '').replace(/[^a-z0-9.@+-]/g, '');
+    if (!cleaned) {
+      setUsernameTouched(false);
+    } else {
+      setUsernameTouched(true);
+    }
+    setFormData((prev) => ({ ...prev, username: cleaned }));
+    if (fieldErrors.username) {
+      setFieldErrors((prev) => ({ ...prev, username: null }));
+    }
+    if (generalError) setGeneralError('');
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +75,20 @@ export default function ShopkeeperRegisterPage() {
     setGeneralError('');
     setFieldErrors({});
 
+    if (!formData.shop_name.trim()) {
+      const msg = 'Please enter your shop name.';
+      setFieldErrors({ shop_name: msg });
+      setGeneralError(msg);
+      toast.error(msg);
+      return;
+    }
+    if (!formData.username.trim()) {
+      const msg = 'Please enter a username.';
+      setFieldErrors({ username: msg });
+      setGeneralError(msg);
+      toast.error(msg);
+      return;
+    }
     if (formData.password !== formData.confirm_password) {
       const msg = 'Passwords do not match.';
       setFieldErrors({ confirm_password: msg });
@@ -122,6 +172,52 @@ export default function ShopkeeperRegisterPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Shop Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  name="shop_name"
+                  value={formData.shop_name}
+                  onChange={handleShopNameChange}
+                  placeholder="e.g. Lovely Bake Studio"
+                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
+                    fieldErrors.shop_name ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                  } focus:bg-white outline-none text-sm transition-all`}
+                />
+                {fieldErrors.shop_name ? (
+                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.shop_name}</p>
+                ) : (
+                  <p className="text-[11px] text-slate-400 mt-1">Store name shown to campus students & shoppers</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Username *
+                </label>
+                <input
+                  type="text"
+                  required
+                  name="username"
+                  value={formData.username}
+                  onChange={handleUsernameChange}
+                  placeholder="e.g. lovelybakestudio"
+                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
+                    fieldErrors.username ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                  } focus:bg-white outline-none text-sm transition-all`}
+                />
+                {fieldErrors.username ? (
+                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.username}</p>
+                ) : (
+                  <p className="text-[11px] text-slate-400 mt-1">Unique handle without spaces or underscores (auto-follows shop name)</p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                   Full Name / Contact Person *
                 </label>
                 <input
@@ -142,23 +238,21 @@ export default function ShopkeeperRegisterPage() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                  Username *
+                  Phone Number *
                 </label>
                 <input
-                  type="text"
+                  type="tel"
                   required
-                  name="username"
-                  value={formData.username}
+                  name="phone"
+                  value={formData.phone}
                   onChange={handleChange}
-                  placeholder="e.g. lovely_bake_studio"
+                  placeholder="+91 98765 43210"
                   className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
-                    fieldErrors.username ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                    fieldErrors.phone ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
                   } focus:bg-white outline-none text-sm transition-all`}
                 />
-                {fieldErrors.username ? (
-                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.username}</p>
-                ) : (
-                  <p className="text-[11px] text-slate-400 mt-1">Unique handle (spaces automatically converted to underscores)</p>
+                {fieldErrors.phone && (
+                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.phone}</p>
                 )}
               </div>
             </div>
@@ -186,37 +280,17 @@ export default function ShopkeeperRegisterPage() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                  Phone Number *
+                  Campus Location or Building Affiliation
                 </label>
                 <input
-                  type="tel"
-                  required
-                  name="phone"
-                  value={formData.phone}
+                  type="text"
+                  name="department"
+                  value={formData.department}
                   onChange={handleChange}
-                  placeholder="+91 98765 43210"
-                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
-                    fieldErrors.phone ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
-                  } focus:bg-white outline-none text-sm transition-all`}
+                  placeholder="e.g. Canteen Complex, Main Academic Arcade, or North Stall 4"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm transition-all"
                 />
-                {fieldErrors.phone && (
-                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.phone}</p>
-                )}
               </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-                Campus Location or Building Affiliation
-              </label>
-              <input
-                type="text"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                placeholder="e.g. Canteen Complex, Main Academic Arcade, or North Stall 4"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm transition-all"
-              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

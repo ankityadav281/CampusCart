@@ -101,6 +101,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
     confirm_password = serializers.CharField(write_only=True, required=False)
+    shop_name = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = User
@@ -112,19 +113,31 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
             'full_name',
             'phone',
             'department',
+            'shop_name',
         ]
 
     def to_internal_value(self, data):
-        if isinstance(data, dict) and 'username' in data:
+        if isinstance(data, dict):
             import re
             data = data.copy()
-            cleaned = re.sub(r'\s+', '_', str(data.get('username', '')).strip())
-            cleaned = re.sub(r'[^\w.@+-]', '', cleaned)
+            shop_name = str(data.get('shop_name', '')).strip()
+            username_input = str(data.get('username', '')).strip()
+
+            # If username is empty but shop_name is provided, auto-follow shop_name without underscores
+            if not username_input and shop_name:
+                username_input = shop_name
+
+            # Strip spaces, underscores, and invalid symbols -> lowercase alphanumeric username
+            cleaned = re.sub(r'[\s_]+', '', username_input)
+            cleaned = re.sub(r'[^\w.@+-]', '', cleaned).replace('_', '')
             data['username'] = cleaned.lower()
+
             if 'email' in data and data['email']:
                 data['email'] = str(data['email']).strip().lower()
             if 'phone' in data and data['phone']:
                 data['phone'] = str(data['phone']).strip()
+            if shop_name:
+                data['shop_name'] = shop_name
         return super().to_internal_value(data)
 
     def validate_email(self, value):
@@ -146,6 +159,7 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password')
+        raw_shop_name = validated_data.pop('shop_name', '').strip()
         full_name = validated_data.get('full_name', '')
         phone = validated_data.get('phone', '')
         email = validated_data.get('email', '')
@@ -158,8 +172,8 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
 
         # Provision the shop immediately so the shop owner dashboard is ready
         from shops.models import Shop
-        shop_name = full_name or username.replace('_', ' ').title()
-        if not any(shop_name.lower().endswith(suf) for suf in ['shop', 'store', 'canteen', 'mart', 'kiosk', 'center', 'studio']):
+        shop_name = raw_shop_name or full_name or username.title()
+        if not raw_shop_name and not any(shop_name.lower().endswith(suf) for suf in ['shop', 'store', 'canteen', 'mart', 'kiosk', 'center', 'studio']):
             shop_name = f"{shop_name}'s Campus Store"
 
         base_name = shop_name
