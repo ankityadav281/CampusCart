@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Lock, Save, Store, User } from 'lucide-react';
-import { authAPI, getErrorMessage, marketplaceAPI } from '../services/api';
+import { Lock, Save, User } from 'lucide-react';
+import { authAPI, getErrorMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import ShopRegistrationWizard from '../components/ShopRegistrationWizard';
 
 export default function ProfilePage() {
-  const { user, updateUserLocal, refreshProfile } = useAuth();
+  const { user, updateUserLocal } = useAuth();
   const toast = useToast();
-  const navigate = useNavigate();
 
   const [profileForm, setProfileForm] = useState({
     full_name: user?.full_name || '',
@@ -22,18 +19,6 @@ export default function ProfilePage() {
 
   const [pwdForm, setPwdForm] = useState({ old_password: '', new_password: '' });
   const [savingPwd, setSavingPwd] = useState(false);
-
-  // Shop application form (only for customers without a shop)
-  const [shopForm, setShopForm] = useState({
-    name: '',
-    category: 'General',
-    location: '',
-    contact_number: user?.phone || '',
-    opening_time: '09:00',
-    closing_time: '20:00',
-    description: '',
-  });
-  const [applyingShop, setApplyingShop] = useState(false);
 
   const handleProfileSave = async (e) => {
     e.preventDefault();
@@ -60,21 +45,6 @@ export default function ProfilePage() {
       toast.error(getErrorMessage(err));
     } finally {
       setSavingPwd(false);
-    }
-  };
-
-  const handleShopRegister = async (e) => {
-    e.preventDefault();
-    setApplyingShop(true);
-    try {
-      const { data } = await marketplaceAPI.registerShop(shopForm);
-      toast.success(data.message);
-      await refreshProfile();
-      navigate('/shop-dashboard');
-    } catch (err) {
-      toast.error(getErrorMessage(err));
-    } finally {
-      setApplyingShop(false);
     }
   };
 
@@ -188,16 +158,6 @@ export default function ProfilePage() {
           </button>
         </form>
       </div>
-
-      {/* Register a Campus Shop (only for customers without a shop) */}
-      {user?.role === 'CUSTOMER' && !user?.shop_id && (
-        <ShopRegistrationWizard
-          onRegistered={async () => {
-            await refreshProfile();
-            navigate('/shop-dashboard');
-          }}
-        />
-      )}
     </div>
   );
 }
