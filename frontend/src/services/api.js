@@ -1,6 +1,18 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+// Normalize API base URL for local development and Render deployments
+const getNormalizedBaseUrl = () => {
+  let url = (import.meta.env.VITE_API_BASE_URL || '/api').trim();
+  if (url && !url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+    url = `https://${url}`;
+  }
+  if (url.startsWith('http') && !url.includes('/api')) {
+    url = `${url.replace(/\/+$/, '')}/api`;
+  }
+  return url;
+};
+
+const API_BASE_URL = getNormalizedBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,

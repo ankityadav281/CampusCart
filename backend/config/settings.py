@@ -31,6 +31,11 @@ ALLOWED_HOSTS = [
     for h in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
     if h.strip()
 ]
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+if os.environ.get('RENDER'):
+    ALLOWED_HOSTS.extend(['.onrender.com', '*'])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,13 +62,22 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+]
+
+try:
+    import whitenoise  # noqa: F401
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
+except ImportError:
+    pass
+
+MIDDLEWARE.extend([
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+])
 
 ROOT_URLCONF = 'config.urls'
 
@@ -85,12 +99,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / os.environ.get('DJANGO_DB_NAME', 'campuscart.sqlite3'),
+try:
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=600)
+except ImportError:
+    db_from_env = None
+
+if db_from_env:
+    DATABASES = {'default': db_from_env}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / os.environ.get('DJANGO_DB_NAME', 'campuscart.sqlite3'),
+        }
     }
-}
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -108,6 +131,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+try:
+    import whitenoise  # noqa: F401
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+        },
+    }
+except ImportError:
+    pass
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -140,6 +176,12 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True').lower() in ('true', '1', 'yes')
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https:\/\/.*\.onrender\.com$',
+    r'^http:\/\/localhost:\d+$',
+    r'^http:\/\/127\.0\.0\.1:\d+$',
+]
 CORS_ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
@@ -149,6 +191,23 @@ CORS_ALLOWED_ORIGINS = [
     if origin.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Configuration
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+CSRF_TRUSTED_ORIGINS.extend([
+    'https://*.onrender.com',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+])
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Upload limits
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
