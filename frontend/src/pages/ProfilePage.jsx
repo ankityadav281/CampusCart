@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Lock, Save, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Lock, Save, Store, User } from 'lucide-react';
 import { authAPI, getErrorMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 export default function ProfilePage() {
-  const { user, updateUserLocal } = useAuth();
+  const { user, updateUserLocal, isShopOwner, isAdmin } = useAuth();
   const toast = useToast();
 
   const [profileForm, setProfileForm] = useState({
@@ -157,6 +158,32 @@ export default function ProfilePage() {
             {savingPwd ? 'Updating...' : 'Update Password'}
           </button>
         </form>
+
+        {/* Become a Campus Shopkeeper Card for Customers */}
+        {!isShopOwner && !isAdmin && (
+          <div className="lg:col-span-12 bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-indigo-700/50">
+            <div className="space-y-2 text-center md:text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-300">
+                <Store className="w-3.5 h-3.5" />
+                Campus Merchant Opportunity
+              </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+                Want to sell on CampusCart?
+              </h3>
+              <p className="text-sm text-indigo-100 max-w-xl">
+                Bring your canteen, stationery shop, printing service, or bookstore online. Receive orders directly from students and faculty with scheduled counter pickup slots.
+              </p>
+            </div>
+            <Link
+              to="/become-shopkeeper"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-sm shadow-lg shadow-amber-400/20 transition-all whitespace-nowrap cursor-pointer shrink-0"
+            >
+              <Store className="w-4 h-4" />
+              Become a Campus Shopkeeper
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

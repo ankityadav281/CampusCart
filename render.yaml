@@ -40,4 +40,4 @@ services:
         fromService:
           type: web
           name: campuscart-backend
-          property: host
+          envVarKey: RENDER_EXTERNAL_URL
