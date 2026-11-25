@@ -81,15 +81,17 @@ const FAQS = [
 ];
 
 export default function BecomeShopkeeperPage() {
-  const { user, isAuthenticated, isShopOwner, isAdmin, refreshProfile } = useAuth();
+  const { user, isAuthenticated, isCustomer, isShopOwner, isAdmin, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [openFaq, setOpenFaq] = useState(0);
 
   useEffect(() => {
-    if (isShopOwner) {
+    if (isAuthenticated && (isCustomer || user?.role?.toUpperCase() === 'CUSTOMER')) {
+      navigate('/', { replace: true });
+    } else if (isShopOwner) {
       navigate('/shop-dashboard', { replace: true });
     }
-  }, [isShopOwner, navigate]);
+  }, [isAuthenticated, isCustomer, user, isShopOwner, navigate]);
 
   const scrollToRegistration = () => {
     if (!isAuthenticated) {

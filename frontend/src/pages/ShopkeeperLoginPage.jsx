@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Store, LogIn } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -10,12 +10,18 @@ export default function ShopkeeperLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { user, isAuthenticated, isCustomer, login } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get('redirect');
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    if (isAuthenticated && (isCustomer || user?.role?.toUpperCase() === 'CUSTOMER')) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isCustomer, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

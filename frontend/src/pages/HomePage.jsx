@@ -18,7 +18,7 @@ import ShopCategoryCard from '../components/ShopCategoryCard';
 import { ProductCardSkeleton, ShopCardSkeleton } from '../components/Skeletons';
 
 export default function HomePage() {
-  const { isCustomer } = useAuth();
+  const { isAuthenticated, isCustomer } = useAuth();
   const [summary, setSummary] = useState({ active_products: 0, approved_shops: 0, campus_members: 0 });
   const [categories, setCategories] = useState([]);
   const [shopCategories, setShopCategories] = useState([]);
@@ -307,8 +307,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Campus Vendor CTA - Hidden for logged-in Customers */}
-        {!isCustomer && (
+        {/* Campus Vendor CTA - Hidden for logged-in Customers / Only shown to guests */}
+        {!isAuthenticated && !isCustomer && (
           <section className="rounded-3xl bg-indigo-50 border border-indigo-100 p-7 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600">

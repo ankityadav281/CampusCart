@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Store, UserPlus, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -21,9 +21,15 @@ export default function ShopkeeperRegisterPage() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState('');
 
-  const { registerShopkeeper } = useAuth();
+  const { user, isAuthenticated, isCustomer, registerShopkeeper } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated && (isCustomer || user?.role?.toUpperCase() === 'CUSTOMER')) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isCustomer, user, navigate]);
 
   const handleShopNameChange = (e) => {
     const val = e.target.value;

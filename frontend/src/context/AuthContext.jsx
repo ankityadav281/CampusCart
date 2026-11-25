@@ -79,15 +79,17 @@ export function AuthProvider({ children }) {
     setUser(updatedUser);
   };
 
+  const roleUpper = user?.role ? String(user.role).trim().toUpperCase() : '';
+
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
         isAuthenticated: Boolean(user),
-        isAdmin: user?.role === 'ADMIN',
-        isShopOwner: user?.role === 'SHOP_OWNER',
-        isCustomer: user?.role === 'CUSTOMER',
+        isAdmin: roleUpper === 'ADMIN',
+        isShopOwner: roleUpper === 'SHOP_OWNER',
+        isCustomer: roleUpper === 'CUSTOMER',
         login,
         register,
         registerShopkeeper,

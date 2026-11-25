@@ -4,7 +4,7 @@ import ShopkeeperNavbar from '../components/ShopkeeperNavbar';
 import ShopkeeperFooter from '../components/ShopkeeperFooter';
 
 export default function ShopkeeperLayout() {
-  const { isCustomer, loading } = useAuth();
+  const { user, isAuthenticated, isCustomer, loading } = useAuth();
 
   if (loading) {
     return (
@@ -15,7 +15,7 @@ export default function ShopkeeperLayout() {
   }
 
   // Prevent logged-in customers from accessing shopkeeper onboarding & registration
-  if (isCustomer) {
+  if (isCustomer || (isAuthenticated && user?.role?.toUpperCase() === 'CUSTOMER')) {
     return <Navigate to="/" replace />;
   }
 

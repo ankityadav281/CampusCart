@@ -113,8 +113,8 @@ export default function Navbar() {
                 Products
               </NavLink>
 
-              {/* Direct "Become a Shopkeeper" Link on Navbar - Hidden for logged-in Customers, Shop Owners, and Admins */}
-              {!isCustomer && !isShopOwner && !isAdmin && (
+              {/* Direct "Become a Shopkeeper" Link on Navbar - Only visible to unauthenticated guests */}
+              {!isAuthenticated && (
                 <NavLink
                   to="/become-shopkeeper"
                   className={({ isActive }) =>
@@ -244,22 +244,6 @@ export default function Navbar() {
                             Orders
                           </Link>
 
-                          {/* Become a Shopkeeper option - Hidden for logged-in Customers, Shop Owners, and Admins */}
-                          {!isCustomer && !isShopOwner && !isAdmin && (
-                            <Link
-                              to="/become-shopkeeper"
-                              onClick={() => setDropdownOpen(false)}
-                              className="flex items-center justify-between px-4 py-2.5 text-sm font-bold text-slate-900 hover:bg-indigo-50/70 hover:text-indigo-700 transition-colors"
-                            >
-                              <div className="flex items-center gap-3">
-                                <Store className="w-4 h-4 text-indigo-600" />
-                                <span>Become a Shopkeeper</span>
-                              </div>
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-amber-100 text-amber-800 uppercase">
-                                Open
-                              </span>
-                            </Link>
-                          )}
 
                           {isShopOwner && (
                             <Link
@@ -399,8 +383,8 @@ export default function Navbar() {
               All Products
             </Link>
 
-            {/* Mobile "Become a Shopkeeper" - Hidden for logged-in Customers, Shop Owners, and Admins */}
-            {!isCustomer && !isShopOwner && !isAdmin && (
+            {/* Mobile "Become a Shopkeeper" - Only visible to unauthenticated guests */}
+            {!isAuthenticated && (
               <Link
                 to="/become-shopkeeper"
                 onClick={() => setMobileOpen(false)}

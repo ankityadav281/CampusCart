@@ -38,7 +38,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-3">Account & Vendors</h4>
             <ul className="space-y-2 text-sm">
-              {!isCustomer && (
+              {!isCustomer && !isAuthenticated && (
                 <li>
                   <Link to="/become-shopkeeper" className="text-amber-400 font-bold hover:text-amber-300 flex items-center gap-1.5">
                     ★ Become a Shopkeeper
