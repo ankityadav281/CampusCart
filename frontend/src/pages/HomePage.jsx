@@ -11,12 +11,14 @@ import {
   Users,
 } from 'lucide-react';
 import { marketplaceAPI, shopCategoryAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import ShopCard from '../components/ShopCard';
 import ShopCategoryCard from '../components/ShopCategoryCard';
 import { ProductCardSkeleton, ShopCardSkeleton } from '../components/Skeletons';
 
 export default function HomePage() {
+  const { isCustomer } = useAuth();
   const [summary, setSummary] = useState({ active_products: 0, approved_shops: 0, campus_members: 0 });
   const [categories, setCategories] = useState([]);
   const [shopCategories, setShopCategories] = useState([]);
@@ -305,28 +307,30 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Campus Vendor CTA */}
-        <section className="rounded-3xl bg-indigo-50 border border-indigo-100 p-7 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600">
-              <Users className="w-4 h-4" />
-              Run a Shop on Campus?
+        {/* Campus Vendor CTA - Hidden for logged-in Customers */}
+        {!isCustomer && (
+          <section className="rounded-3xl bg-indigo-50 border border-indigo-100 p-7 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600">
+                <Users className="w-4 h-4" />
+                Run a Shop on Campus?
+              </div>
+              <h3 className="text-2xl font-extrabold text-slate-900">
+                Bring Your University Shop Online with CampusCart
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Manage inventory in real time, receive pickup orders directly from students and faculty, and track daily sales analytics from your dedicated shop dashboard.
+              </p>
             </div>
-            <h3 className="text-2xl font-extrabold text-slate-900">
-              Bring Your University Shop Online with CampusCart
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Manage inventory in real time, receive pickup orders directly from students and faculty, and track daily sales analytics from your dedicated shop dashboard.
-            </p>
-          </div>
-          <Link
-            to="/become-shopkeeper"
-            className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition-colors"
-          >
-            Become a Shopkeeper
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </section>
+            <Link
+              to="/become-shopkeeper"
+              className="shrink-0 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-md shadow-indigo-600/20 transition-colors"
+            >
+              Become a Shopkeeper
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </section>
+        )}
       </div>
     </div>
   );

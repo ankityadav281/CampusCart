@@ -21,7 +21,7 @@ import { useCart } from '../context/CartContext';
 import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
-  const { user, isAuthenticated, isAdmin, isShopOwner, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isShopOwner, isCustomer, logout } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
 
@@ -113,8 +113,8 @@ export default function Navbar() {
                 Products
               </NavLink>
 
-              {/* Direct "Become a Shopkeeper" Link on Navbar */}
-              {!isShopOwner && (
+              {/* Direct "Become a Shopkeeper" Link on Navbar - Hidden for logged-in Customers, Shop Owners, and Admins */}
+              {!isCustomer && !isShopOwner && !isAdmin && (
                 <NavLink
                   to="/become-shopkeeper"
                   className={({ isActive }) =>
@@ -244,8 +244,8 @@ export default function Navbar() {
                             Orders
                           </Link>
 
-                          {/* Become a Shopkeeper option for non-shop owners */}
-                          {!isShopOwner && !isAdmin && (
+                          {/* Become a Shopkeeper option - Hidden for logged-in Customers, Shop Owners, and Admins */}
+                          {!isCustomer && !isShopOwner && !isAdmin && (
                             <Link
                               to="/become-shopkeeper"
                               onClick={() => setDropdownOpen(false)}
@@ -399,20 +399,22 @@ export default function Navbar() {
               All Products
             </Link>
 
-            {/* Mobile "Become a Shopkeeper" */}
-            <Link
-              to="/become-shopkeeper"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-indigo-700 bg-indigo-50/70 border border-indigo-100"
-            >
-              <div className="flex items-center gap-2">
-                <Store className="w-4 h-4 text-indigo-600" />
-                <span>Become a Shopkeeper</span>
-              </div>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-amber-200 text-amber-900 uppercase">
-                Sell
-              </span>
-            </Link>
+            {/* Mobile "Become a Shopkeeper" - Hidden for logged-in Customers, Shop Owners, and Admins */}
+            {!isCustomer && !isShopOwner && !isAdmin && (
+              <Link
+                to="/become-shopkeeper"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-indigo-700 bg-indigo-50/70 border border-indigo-100"
+              >
+                <div className="flex items-center gap-2">
+                  <Store className="w-4 h-4 text-indigo-600" />
+                  <span>Become a Shopkeeper</span>
+                </div>
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-amber-200 text-amber-900 uppercase">
+                  Sell
+                </span>
+              </Link>
+            )}
 
             {isAuthenticated && (
               <>

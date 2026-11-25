@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Mail, MapPin, Phone, ShoppingBag } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Footer() {
+  const { isCustomer, isAuthenticated } = useAuth();
   return (
     <footer className="bg-slate-900 text-slate-300 mt-16 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -36,11 +38,21 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-3">Account & Vendors</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/become-shopkeeper" className="text-amber-400 font-bold hover:text-amber-300 flex items-center gap-1.5">★ Become a Shopkeeper</Link></li>
+              {!isCustomer && (
+                <li>
+                  <Link to="/become-shopkeeper" className="text-amber-400 font-bold hover:text-amber-300 flex items-center gap-1.5">
+                    ★ Become a Shopkeeper
+                  </Link>
+                </li>
+              )}
               <li><Link to="/my-orders" className="hover:text-indigo-400 transition-colors">Track My Orders</Link></li>
               <li><Link to="/profile" className="hover:text-indigo-400 transition-colors">Manage Profile</Link></li>
-              <li><Link to="/register" className="hover:text-indigo-400 transition-colors">Student Registration</Link></li>
-              <li><Link to="/login" className="hover:text-indigo-400 transition-colors">Shop Manager / Admin Login</Link></li>
+              {!isAuthenticated && (
+                <>
+                  <li><Link to="/register" className="hover:text-indigo-400 transition-colors">Student Registration</Link></li>
+                  <li><Link to="/login" className="hover:text-indigo-400 transition-colors">Shop Manager / Admin Login</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
