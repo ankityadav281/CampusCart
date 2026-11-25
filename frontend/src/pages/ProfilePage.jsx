@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Save, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Save, User } from 'lucide-react';
 import { authAPI, getErrorMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -18,6 +18,8 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
 
   const [pwdForm, setPwdForm] = useState({ old_password: '', new_password: '' });
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [savingPwd, setSavingPwd] = useState(false);
 
   const handleProfileSave = async (e) => {
@@ -128,26 +130,48 @@ export default function ProfilePage() {
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               Current Password
             </label>
-            <input
-              type="password"
-              required
-              value={pwdForm.old_password}
-              onChange={(e) => setPwdForm((p) => ({ ...p, old_password: e.target.value }))}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm"
-            />
+            <div className="relative">
+              <input
+                type={showOldPassword ? 'text' : 'password'}
+                required
+                value={pwdForm.old_password}
+                onChange={(e) => setPwdForm((p) => ({ ...p, old_password: e.target.value }))}
+                className="w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowOldPassword((p) => !p)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                tabIndex={-1}
+                aria-label={showOldPassword ? 'Hide current password' : 'Show current password'}
+              >
+                {showOldPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               New Password
             </label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              value={pwdForm.new_password}
-              onChange={(e) => setPwdForm((p) => ({ ...p, new_password: e.target.value }))}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm"
-            />
+            <div className="relative">
+              <input
+                type={showNewPassword ? 'text' : 'password'}
+                required
+                minLength={6}
+                value={pwdForm.new_password}
+                onChange={(e) => setPwdForm((p) => ({ ...p, new_password: e.target.value }))}
+                className="w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 outline-none text-sm transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword((p) => !p)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                tabIndex={-1}
+                aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
+              >
+                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
           <button
             type="submit"

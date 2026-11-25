@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
   CheckCircle2,
+  Eye,
+  EyeOff,
   Flag,
   FolderKanban,
   FolderTree,
@@ -43,6 +45,7 @@ export default function AdminDashboardPage() {
 
   // Forms/Modals
   const [userModal, setUserModal] = useState(false);
+  const [showNewUserPassword, setShowNewUserPassword] = useState(false);
   const [newUser, setNewUser] = useState({
     username: '',
     email: '',
@@ -818,15 +821,26 @@ export default function AdminDashboardPage() {
                 <option value="CUSTOMER">Customer (Student/Staff)</option>
                 <option value="ADMIN">Administrator</option>
               </select>
-              <input
-                required
-                type="password"
-                minLength={6}
-                placeholder="Initial Password *"
-                value={newUser.password}
-                onChange={(e) => setNewUser((p) => ({ ...p, password: e.target.value }))}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm"
-              />
+              <div className="relative">
+                <input
+                  required
+                  type={showNewUserPassword ? 'text' : 'password'}
+                  minLength={6}
+                  placeholder="Initial Password *"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser((p) => ({ ...p, password: e.target.value }))}
+                  className="w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewUserPassword((p) => !p)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                  tabIndex={-1}
+                  aria-label={showNewUserPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showNewUserPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               <button
                 type="submit"
                 className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm cursor-pointer"

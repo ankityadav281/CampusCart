@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Store, UserPlus, AlertCircle } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, Store, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../services/api';
@@ -16,6 +16,8 @@ export default function ShopkeeperRegisterPage() {
     password: '',
     confirm_password: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -304,18 +306,29 @@ export default function ShopkeeperRegisterPage() {
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                   Password *
                 </label>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Min 6 characters"
-                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
-                    fieldErrors.password ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
-                  } focus:bg-white outline-none text-sm transition-all`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    minLength={6}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Min 6 characters"
+                    className={`w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-50 border ${
+                      fieldErrors.password ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                    } focus:bg-white outline-none text-sm transition-all`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                    tabIndex={-1}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 {fieldErrors.password && (
                   <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.password}</p>
                 )}
@@ -325,17 +338,28 @@ export default function ShopkeeperRegisterPage() {
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                   Confirm Password *
                 </label>
-                <input
-                  type="password"
-                  required
-                  name="confirm_password"
-                  value={formData.confirm_password}
-                  onChange={handleChange}
-                  placeholder="Re-enter password"
-                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
-                    fieldErrors.confirm_password ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
-                  } focus:bg-white outline-none text-sm transition-all`}
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    name="confirm_password"
+                    value={formData.confirm_password}
+                    onChange={handleChange}
+                    placeholder="Re-enter password"
+                    className={`w-full pl-3.5 pr-11 py-2.5 rounded-xl bg-slate-50 border ${
+                      fieldErrors.confirm_password ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                    } focus:bg-white outline-none text-sm transition-all`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer transition-colors"
+                    tabIndex={-1}
+                    aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
                 {fieldErrors.confirm_password && (
                   <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.confirm_password}</p>
                 )}
