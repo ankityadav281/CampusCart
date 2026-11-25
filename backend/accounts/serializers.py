@@ -102,6 +102,10 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
     confirm_password = serializers.CharField(write_only=True, required=False)
     shop_name = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    category_id = serializers.IntegerField(required=False, allow_null=True, write_only=True)
+    shop_type_id = serializers.IntegerField(required=False, allow_null=True, write_only=True)
+    category = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    shop_type = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     class Meta:
         model = User
@@ -114,6 +118,10 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
             'phone',
             'department',
             'shop_name',
+            'category_id',
+            'shop_type_id',
+            'category',
+            'shop_type',
         ]
 
     def to_internal_value(self, data):
@@ -138,6 +146,18 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
                 data['phone'] = str(data['phone']).strip()
             if shop_name:
                 data['shop_name'] = shop_name
+            if 'shop_type' in data and data['shop_type']:
+                try:
+                    data['shop_type_id'] = int(data['shop_type'])
+                except (ValueError, TypeError):
+                    pass
+                data['shop_type'] = str(data['shop_type']).strip()
+            if 'category' in data and data['category']:
+                try:
+                    data['category_id'] = int(data['category'])
+                except (ValueError, TypeError):
+                    pass
+                data['category'] = str(data['category']).strip()
         return super().to_internal_value(data)
 
     def validate_email(self, value):
@@ -160,6 +180,10 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         raw_shop_name = validated_data.pop('shop_name', '').strip()
+        category_id = validated_data.pop('category_id', None)
+        shop_type_id = validated_data.pop('shop_type_id', None)
+        raw_category = validated_data.pop('category', '').strip()
+        raw_shop_type = validated_data.pop('shop_type', '').strip()
         full_name = validated_data.get('full_name', '')
         phone = validated_data.get('phone', '')
         email = validated_data.get('email', '')
@@ -171,7 +195,8 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         # Provision the shop immediately so the shop owner dashboard is ready
-        from shops.models import Shop
+        from django.db.models import Q
+        from shops.models import Shop, ShopCategory, ShopType
         shop_name = raw_shop_name or full_name or username.title()
         if not raw_shop_name and not any(shop_name.lower().endswith(suf) for suf in ['shop', 'store', 'canteen', 'mart', 'kiosk', 'center', 'studio']):
             shop_name = f"{shop_name}'s Campus Store"
@@ -182,9 +207,42 @@ class ShopkeeperRegisterSerializer(serializers.ModelSerializer):
             shop_name = f"{base_name} ({counter})"
             counter += 1
 
+        target_category = None
+        target_shop_type = None
+
+        if shop_type_id:
+            try:
+                target_shop_type = ShopType.objects.select_related('category').get(pk=shop_type_id)
+                target_category = target_shop_type.category
+            except ShopType.DoesNotExist:
+                pass
+
+        if not target_shop_type and raw_shop_type:
+            target_shop_type = ShopType.objects.select_related('category').filter(
+                Q(name__iexact=raw_shop_type) | Q(slug__iexact=raw_shop_type)
+            ).first()
+            if target_shop_type:
+                target_category = target_shop_type.category
+
+        if not target_category and category_id:
+            try:
+                target_category = ShopCategory.objects.get(pk=category_id)
+            except ShopCategory.DoesNotExist:
+                pass
+
+        if not target_category and raw_category:
+            target_category = ShopCategory.objects.filter(
+                Q(name__iexact=raw_category) | Q(slug__iexact=raw_category)
+            ).first()
+
+        if not target_category:
+            target_category = ShopCategory.objects.first()
+
         Shop.objects.create(
             owner=user,
             name=shop_name,
+            category=target_category,
+            shop_type=target_shop_type,
             location=department or 'Main University Campus',
             contact_number=phone or '',
             contact_email=email or '',

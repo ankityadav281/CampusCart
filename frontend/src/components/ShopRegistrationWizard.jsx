@@ -16,6 +16,7 @@ import {
 import { marketplaceAPI, shopCategoryAPI, getErrorMessage } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import CategoryIcon from './CategoryIcon';
+import { FALLBACK_SHOP_CATEGORIES } from '../constants/shopCategories';
 
 const STEPS = [
   { step: 1, title: 'Shop Details' },
@@ -29,8 +30,8 @@ const STEPS = [
 export default function ShopRegistrationWizard({ onRegistered }) {
   const toast = useToast();
   const [currentStep, setCurrentStep] = useState(1);
-  const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [categories, setCategories] = useState(FALLBACK_SHOP_CATEGORIES);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Form state
@@ -61,8 +62,13 @@ export default function ShopRegistrationWizard({ onRegistered }) {
   useEffect(() => {
     shopCategoryAPI
       .list()
-      .then((res) => setCategories(res.data || []))
-      .catch(() => setCategories([]))
+      .then((res) => {
+        const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+        if (list && list.length > 0) {
+          setCategories(list);
+        }
+      })
+      .catch(() => {})
       .finally(() => setLoadingCategories(false));
   }, []);
 

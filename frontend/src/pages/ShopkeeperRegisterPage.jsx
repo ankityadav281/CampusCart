@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Store, UserPlus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getErrorMessage } from '../services/api';
+import { getErrorMessage, shopCategoryAPI } from '../services/api';
+import { FALLBACK_SHOP_CATEGORIES } from '../constants/shopCategories';
 
 export default function ShopkeeperRegisterPage() {
   const [formData, setFormData] = useState({
     shop_name: '',
+    category: '',
+    shop_type: '',
     full_name: '',
     username: '',
     email: '',
@@ -16,6 +19,7 @@ export default function ShopkeeperRegisterPage() {
     password: '',
     confirm_password: '',
   });
+  const [categories, setCategories] = useState(FALLBACK_SHOP_CATEGORIES);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
@@ -32,6 +36,34 @@ export default function ShopkeeperRegisterPage() {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, isCustomer, user, navigate]);
+
+  useEffect(() => {
+    let isMounted = true;
+    shopCategoryAPI
+      .list()
+      .then((res) => {
+        if (!isMounted) return;
+        const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+        if (list && list.length > 0) {
+          setCategories(list);
+        }
+      })
+      .catch((err) => {
+        // Keeps fallback categories on connection or network issues
+        console.warn('Using preloaded campus shop categories:', err?.message || err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const selectedCategoryObj = categories.find(
+    (c) =>
+      String(c.id) === String(formData.category) ||
+      c.slug === formData.category ||
+      c.name === formData.category
+  );
+  const availableShopTypes = selectedCategoryObj?.shop_types || [];
 
   const handleShopNameChange = (e) => {
     const val = e.target.value;
@@ -97,6 +129,20 @@ export default function ShopkeeperRegisterPage() {
       toast.error(msg);
       return;
     }
+    if (!formData.category) {
+      const msg = 'Please select a shop category.';
+      setFieldErrors({ category: msg });
+      setGeneralError(msg);
+      toast.error(msg);
+      return;
+    }
+    if (!formData.shop_type) {
+      const msg = 'Please select your type of shop.';
+      setFieldErrors({ shop_type: msg });
+      setGeneralError(msg);
+      toast.error(msg);
+      return;
+    }
     if (formData.password !== formData.confirm_password) {
       const msg = 'Passwords do not match.';
       setFieldErrors({ confirm_password: msg });
@@ -114,7 +160,12 @@ export default function ShopkeeperRegisterPage() {
 
     setLoading(true);
     try {
-      await registerShopkeeper(formData);
+      const payload = {
+        ...formData,
+        category_id: formData.category ? (Number(formData.category) || formData.category) : null,
+        shop_type_id: formData.shop_type ? (Number(formData.shop_type) || formData.shop_type) : null,
+      };
+      await registerShopkeeper(payload);
       toast.success('Shopkeeper account registered successfully! Welcome to your Shop Dashboard.');
       navigate('/shop-dashboard');
     } catch (err) {
@@ -219,6 +270,67 @@ export default function ShopkeeperRegisterPage() {
                   <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.username}</p>
                 ) : (
                   <p className="text-[11px] text-slate-400 mt-1">Unique handle without spaces or underscores (auto-follows shop name)</p>
+                )}
+              </div>
+            </div>
+
+            {/* Shop Category & Type of Shop */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Shop Category *
+                </label>
+                <select
+                  required
+                  name="category"
+                  value={formData.category}
+                  onChange={(e) => {
+                    const newCatId = e.target.value;
+                    setFormData((prev) => ({ ...prev, category: newCatId, shop_type: '' }));
+                    if (fieldErrors.category) setFieldErrors((p) => ({ ...p, category: null }));
+                    if (fieldErrors.shop_type) setFieldErrors((p) => ({ ...p, shop_type: null }));
+                  }}
+                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
+                    fieldErrors.category ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                  } focus:bg-white outline-none text-sm transition-all`}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                {fieldErrors.category && (
+                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.category}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Type of Shop *
+                </label>
+                <select
+                  required
+                  name="shop_type"
+                  value={formData.shop_type}
+                  onChange={handleChange}
+                  disabled={!formData.category}
+                  className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border ${
+                    fieldErrors.shop_type ? 'border-rose-400 focus:border-rose-500' : 'border-slate-200 focus:border-indigo-500'
+                  } focus:bg-white outline-none text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <option value="">
+                    {!formData.category ? 'Select Category First' : 'Select Type of Shop'}
+                  </option>
+                  {availableShopTypes.map((st) => (
+                    <option key={st.id || st.slug || st.name} value={st.id}>
+                      {st.name}
+                    </option>
+                  ))}
+                </select>
+                {fieldErrors.shop_type && (
+                  <p className="text-xs text-rose-600 font-semibold mt-1">{fieldErrors.shop_type}</p>
                 )}
               </div>
             </div>

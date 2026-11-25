@@ -745,50 +745,18 @@ export default function ShopOwnerDashboardPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">
-                    Main Category *
+                    Type of Shop
                   </label>
-                  <select
-                    required
-                    value={shopForm.category}
-                    onChange={(e) => {
-                      const newCatId = e.target.value;
-                      setShopForm((p) => ({ ...p, category: newCatId, shop_type: '' }));
-                    }}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm outline-none focus:bg-white focus:border-indigo-500"
-                  >
-                    <option value="">Select Main Category</option>
-                    {shopCategories.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">
-                    Shop Type *
-                  </label>
-                  <select
-                    required
-                    value={shopForm.shop_type}
-                    onChange={(e) => setShopForm((p) => ({ ...p, shop_type: e.target.value }))}
-                    disabled={!shopForm.category}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm outline-none focus:bg-white focus:border-indigo-500 disabled:opacity-50"
-                  >
-                    <option value="">
-                      {!shopForm.category
-                        ? 'Select Main Category First'
-                        : 'Select Shop Type'}
-                    </option>
-                    {(
-                      shopCategories.find((c) => String(c.id) === String(shopForm.category))?.shop_types || []
-                    ).map((st) => (
-                      <option key={st.id} value={st.id}>
-                        {st.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-sm font-semibold text-slate-700 flex items-center justify-between">
+                    <span>
+                      {shop?.shop_type_name
+                        ? `${shop.shop_type_name} (${shop.category_name || 'Category'})`
+                        : shop?.category_name || 'Assigned at Registration'}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-slate-200/80 px-2 py-0.5 rounded">
+                      Assigned at Registration
+                    </span>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase text-slate-500 mb-1.5">Campus Location</label>

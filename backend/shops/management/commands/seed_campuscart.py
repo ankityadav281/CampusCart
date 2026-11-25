@@ -134,6 +134,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--reset', action='store_true', help='Clear existing demo data before seeding.')
+        parser.add_argument('--demo-shops', action='store_true', help='Seed dummy demo shops and sample products/orders.')
 
     def handle(self, *args, **options):
         if options.get('reset'):
@@ -211,6 +212,16 @@ class Command(BaseCommand):
 
         # 2.5 Seed ShopCategories and ShopTypes
         call_command('seed_shop_categories')
+
+        # If --demo-shops is not explicitly provided, skip dummy demo shops
+        if not options.get('demo_shops'):
+            self.stdout.write(
+                self.style.SUCCESS(
+                    'CampusCart database initialized with admin account, categories, shop categories, and types. '
+                    'Demo dummy shops skipped (use --demo-shops if dummy shops are desired).'
+                )
+            )
+            return
 
         # 3. Shops + Owners + Products
         shops_data = [
