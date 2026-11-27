@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   Package,
+  Percent,
   Search,
   ShieldCheck,
   ShoppingBag,
@@ -61,21 +62,21 @@ export default function Navbar() {
 
   const navLinkClass = ({ isActive }) =>
     `text-sm font-semibold transition-colors ${
-      isActive ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'
+      isActive ? 'text-indigo-600' : 'text-slate-600 hover:text-indigo-600'
     }`;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white shadow-md shadow-blue-600/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div className="leading-tight">
               <span className="font-display font-extrabold text-lg text-slate-900 tracking-tight">
-                Campus<span className="text-blue-600">Cart</span>
+                Campus<span className="text-indigo-600">Cart</span>
               </span>
               <span className="hidden sm:block text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                 University Marketplace
@@ -92,11 +93,11 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search campus shops, notebooks, snacks, electronics..."
-                className="w-full pl-10 pr-20 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none text-sm transition-all"
+                className="w-full pl-10 pr-20 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none text-sm transition-all"
               />
               <button
                 type="submit"
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-colors cursor-pointer"
               >
                 Search
               </button>
@@ -106,11 +107,25 @@ export default function Navbar() {
           {/* Desktop Navigation & Actions */}
           <div className="hidden md:flex items-center gap-4 lg:gap-5 whitespace-nowrap">
             <nav className="flex items-center gap-4 lg:gap-5 whitespace-nowrap">
+              <NavLink to="/" className={navLinkClass}>
+                Home
+              </NavLink>
               <NavLink to="/shops" className={navLinkClass}>
-                Shops
+                Explore Shops
               </NavLink>
               <NavLink to="/products" className={navLinkClass}>
                 Products
+              </NavLink>
+              <NavLink
+                to="/products?on_sale=true"
+                className={({ isActive }) =>
+                  `inline-flex items-center gap-1 text-sm font-semibold transition-colors ${
+                    isActive ? 'text-amber-600' : 'text-slate-600 hover:text-amber-600'
+                  }`
+                }
+              >
+                <Percent className="w-3.5 h-3.5 text-amber-500" />
+                <span>Offers</span>
               </NavLink>
 
               {/* Direct "Become a Shopkeeper" Link on Navbar - Only visible to unauthenticated guests */}
@@ -120,12 +135,12 @@ export default function Navbar() {
                   className={({ isActive }) =>
                     `inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                       isActive
-                        ? 'text-blue-600 bg-blue-50 border border-blue-200'
-                        : 'text-slate-700 hover:text-blue-600 hover:bg-slate-100'
+                        ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                        : 'text-slate-700 hover:text-indigo-600 hover:bg-slate-100'
                     }`
                   }
                 >
-                  <Store className="w-4 h-4 text-blue-600" />
+                  <Store className="w-4 h-4 text-indigo-600" />
                   <span>Become a Shopkeeper</span>
                 </NavLink>
               )}
@@ -143,7 +158,7 @@ export default function Navbar() {
               {isShopOwner && (
                 <Link
                   to="/shop-dashboard"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition-colors"
                 >
                   <Store className="w-4 h-4" />
                   Shop Dashboard
@@ -152,7 +167,7 @@ export default function Navbar() {
               {isAdmin && (
                 <Link
                   to="/admin-dashboard"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-blue-700 text-xs font-bold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white hover:bg-indigo-700 text-xs font-bold transition-colors"
                 >
                   <ShieldCheck className="w-4 h-4" />
                   Admin Panel
@@ -164,26 +179,25 @@ export default function Navbar() {
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                className="relative p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                 aria-label="Shopping Cart"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cart.total_items > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                     {cart.total_items}
                   </span>
                 )}
               </Link>
 
-              {/* Flipkart-Style Account / Login Trigger with Popover Dropdown */}
+              {/* Account / Login Trigger with Popover Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 {isAuthenticated ? (
-                  /* Authenticated User Button */
                   <button
                     onClick={() => setDropdownOpen((v) => !v)}
-                    className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-blue-300 bg-white transition-colors cursor-pointer shadow-2xs"
+                    className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-indigo-300 bg-white transition-colors cursor-pointer shadow-2xs"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold flex items-center justify-center">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">
                       {(user.full_name || user.username).slice(0, 1).toUpperCase()}
                     </div>
                     <span className="text-sm font-semibold text-slate-800 max-w-[100px] truncate">
@@ -196,10 +210,9 @@ export default function Navbar() {
                     />
                   </button>
                 ) : (
-                  /* Guest User "Login" Trigger (Flipkart-Style) */
                   <button
                     onClick={() => setDropdownOpen((v) => !v)}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-blue-500 hover:text-blue-600 text-slate-800 font-bold text-sm bg-white transition-all cursor-pointer shadow-2xs"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-indigo-500 hover:text-indigo-600 text-slate-800 font-bold text-sm bg-white transition-all cursor-pointer shadow-2xs"
                   >
                     <User className="w-4 h-4 text-slate-600" />
                     <span>Login</span>
@@ -211,16 +224,15 @@ export default function Navbar() {
                   </button>
                 )}
 
-                {/* Dropdown Menu (Flipkart-Inspired) */}
+                {/* Dropdown Menu */}
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                     {isAuthenticated ? (
-                      /* Authenticated Dropdown Content */
                       <>
                         <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
                           <p className="text-sm font-bold text-slate-900 truncate">{user.full_name}</p>
                           <p className="text-xs text-slate-500 truncate">{user.email}</p>
-                          <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[10px] font-bold uppercase">
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase">
                             {user.role.replace('_', ' ')}
                           </span>
                         </div>
@@ -229,7 +241,7 @@ export default function Navbar() {
                           <Link
                             to="/profile"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
                           >
                             <User className="w-4 h-4 text-slate-400" />
                             My Profile
@@ -238,7 +250,7 @@ export default function Navbar() {
                           <Link
                             to="/my-orders"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
                           >
                             <Package className="w-4 h-4 text-slate-400" />
                             Orders
@@ -248,9 +260,9 @@ export default function Navbar() {
                             <Link
                               to="/shop-dashboard"
                               onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-semibold"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-semibold"
                             >
-                              <LayoutDashboard className="w-4 h-4 text-blue-500" />
+                              <LayoutDashboard className="w-4 h-4 text-indigo-500" />
                               Shop Dashboard
                             </Link>
                           )}
@@ -259,9 +271,9 @@ export default function Navbar() {
                             <Link
                               to="/admin-dashboard"
                               onClick={() => setDropdownOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors font-semibold"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors font-semibold"
                             >
-                              <ShieldCheck className="w-4 h-4 text-blue-500" />
+                              <ShieldCheck className="w-4 h-4 text-indigo-500" />
                               Admin Dashboard
                             </Link>
                           )}
@@ -278,14 +290,13 @@ export default function Navbar() {
                         </div>
                       </>
                     ) : (
-                      /* Guest Dropdown Content (Exact Flipkart Experience) */
                       <>
                         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/70">
                           <span className="text-xs text-slate-600 font-medium">New customer?</span>
                           <Link
                             to="/register"
                             onClick={() => setDropdownOpen(false)}
-                            className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline"
+                            className="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline"
                           >
                             Sign Up
                           </Link>
@@ -296,13 +307,13 @@ export default function Navbar() {
                           <Link
                             to="/become-shopkeeper"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center justify-between px-4 py-2.5 text-sm font-bold text-slate-900 hover:bg-blue-50 hover:text-blue-600 transition-colors group"
+                            className="flex items-center justify-between px-4 py-2.5 text-sm font-bold text-slate-900 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group"
                           >
                             <div className="flex items-center gap-3">
-                              <Store className="w-4 h-4 text-blue-600" />
+                              <Store className="w-4 h-4 text-indigo-600" />
                               <span>Become a Shopkeeper</span>
                             </div>
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-orange-100 text-orange-800 uppercase">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-amber-100 text-amber-800 uppercase">
                               Sell
                             </span>
                           </Link>
@@ -310,7 +321,7 @@ export default function Navbar() {
                           <Link
                             to="/become-shopkeeper"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
                           >
                             <HelpCircle className="w-4 h-4 text-slate-400" />
                             Campus 24x7 Help
@@ -321,7 +332,7 @@ export default function Navbar() {
                           <Link
                             to="/login"
                             onClick={() => setDropdownOpen(false)}
-                            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors"
+                            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition-colors"
                           >
                             <LogIn className="w-3.5 h-3.5" />
                             Sign In to Account
@@ -341,7 +352,7 @@ export default function Navbar() {
             <Link to="/cart" className="relative p-2 text-slate-700">
               <ShoppingCart className="w-5 h-5" />
               {cart.total_items > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                   {cart.total_items}
                 </span>
               )}
@@ -367,7 +378,7 @@ export default function Navbar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search products or shops..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-sm outline-none focus:bg-white focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-sm outline-none focus:bg-white focus:border-indigo-500"
             />
           </form>
 
@@ -376,10 +387,13 @@ export default function Navbar() {
               Home
             </Link>
             <Link to="/shops" onClick={() => setMobileOpen(false)} className="px-3 py-2 rounded-xl font-semibold text-slate-700 hover:bg-slate-50">
-              All Shops
+              Explore Shops
             </Link>
             <Link to="/products" onClick={() => setMobileOpen(false)} className="px-3 py-2 rounded-xl font-semibold text-slate-700 hover:bg-slate-50">
-              All Products
+              Products
+            </Link>
+            <Link to="/products?on_sale=true" onClick={() => setMobileOpen(false)} className="px-3 py-2 rounded-xl font-semibold text-amber-600 hover:bg-amber-50">
+              Special Offers
             </Link>
 
             {/* Mobile "Become a Shopkeeper" - Only visible to unauthenticated guests */}
@@ -387,13 +401,13 @@ export default function Navbar() {
               <Link
                 to="/become-shopkeeper"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-blue-700 bg-blue-50/70 border border-blue-100"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-indigo-700 bg-indigo-50/70 border border-indigo-100"
               >
                 <div className="flex items-center gap-2">
-                  <Store className="w-4 h-4 text-blue-600" />
+                  <Store className="w-4 h-4 text-indigo-600" />
                   <span>Become a Shopkeeper</span>
                 </div>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-orange-100 text-orange-900 uppercase">
+                <span className="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-amber-100 text-amber-900 uppercase">
                   Sell
                 </span>
               </Link>
@@ -410,7 +424,7 @@ export default function Navbar() {
               </>
             )}
             {isShopOwner && (
-              <Link to="/shop-dashboard" onClick={() => setMobileOpen(false)} className="px-3 py-2 rounded-xl font-bold text-blue-600 bg-blue-50">
+              <Link to="/shop-dashboard" onClick={() => setMobileOpen(false)} className="px-3 py-2 rounded-xl font-bold text-indigo-600 bg-indigo-50">
                 Shop Owner Dashboard
               </Link>
             )}
@@ -441,7 +455,7 @@ export default function Navbar() {
                 <Link
                   to="/register"
                   onClick={() => setMobileOpen(false)}
-                  className="py-2.5 text-center rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold text-sm text-white"
+                  className="py-2.5 text-center rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-sm text-white"
                 >
                   Register
                 </Link>

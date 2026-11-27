@@ -60,12 +60,12 @@ export default function NotificationBell() {
           setOpen((v) => !v);
           if (!open) loadNotifications();
         }}
-        className="relative p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+        className="relative p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
         aria-label="Notifications"
       >
         <Bell className="w-5 h-5" />
         {data.unread_count > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-orange-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+          <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
             {data.unread_count > 9 ? '9+' : data.unread_count}
           </span>
         )}
@@ -78,7 +78,7 @@ export default function NotificationBell() {
             {data.unread_count > 0 && (
               <button
                 onClick={handleMarkAll}
-                className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 cursor-pointer"
+                className="text-xs text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-1 cursor-pointer"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
                 Mark all read
@@ -95,7 +95,7 @@ export default function NotificationBell() {
                   key={n.id}
                   onClick={() => !n.is_read && handleMarkRead(n.id)}
                   className={`p-3 text-xs transition-colors cursor-pointer ${
-                    n.is_read ? 'bg-white hover:bg-slate-50' : 'bg-blue-50/50 hover:bg-blue-50'
+                    n.is_read ? 'bg-white hover:bg-slate-50' : 'bg-indigo-50/40 hover:bg-indigo-50/80'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
