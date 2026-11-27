@@ -31,17 +31,17 @@ export default function DashboardLayout({
   };
 
   const SidebarContent = (
-    <div className="flex flex-col h-full">
-      <div className="p-5 border-b border-slate-800">
+    <div className="flex flex-col h-full bg-[#172554]">
+      <div className="p-5 border-b border-blue-900/50">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-indigo-500 flex items-center justify-center text-white">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/30">
             <ShoppingBag className="w-5 h-5" />
           </div>
           <div>
             <span className="font-display font-extrabold text-lg text-white">
-              Campus<span className="text-indigo-400">Cart</span>
+              Campus<span className="text-blue-400">Cart</span>
             </span>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{badgeText}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-orange-400">{badgeText}</p>
           </div>
         </Link>
       </div>
@@ -59,8 +59,8 @@ export default function DashboardLayout({
               }}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/30'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-950/40'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <span className="flex items-center gap-3">
@@ -70,7 +70,7 @@ export default function DashboardLayout({
               {tab.badge > 0 && (
                 <span
                   className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-rose-500 text-white'
+                    isActive ? 'bg-white/20 text-white' : 'bg-orange-500 text-white shadow-xs'
                   }`}
                 >
                   {tab.badge}
@@ -81,10 +81,10 @@ export default function DashboardLayout({
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-blue-900/50">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/50 transition-colors cursor-pointer"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-300 hover:bg-rose-900/30 transition-colors cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           Sign Out ({user?.username})
@@ -95,16 +95,16 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-64 bg-slate-900 text-white shrink-0 sticky top-0 h-screen">
+      {/* Desktop Sidebar (Deep Navy #172554) */}
+      <aside className="hidden lg:block w-64 bg-[#172554] text-white shrink-0 sticky top-0 h-screen shadow-xl">
         {SidebarContent}
       </aside>
 
       {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div className="fixed inset-0 bg-slate-950/60" onClick={() => setSidebarOpen(false)} />
-          <div className="relative w-68 max-w-full bg-slate-900 text-white h-full shadow-2xl">
+          <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-68 max-w-full bg-[#172554] text-white h-full shadow-2xl">
             <button
               onClick={() => setSidebarOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white"
@@ -118,7 +118,7 @@ export default function DashboardLayout({
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -136,7 +136,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3">
             <NotificationBell />
             <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-slate-200">
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
                 {(user?.full_name || user?.username || 'U').slice(0, 1).toUpperCase()}
               </div>
               <div className="leading-tight">
